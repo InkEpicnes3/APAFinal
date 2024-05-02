@@ -20,7 +20,7 @@ public class EnemyGame implements Runnable {
         window = new JFrame("Enemy Game");
         window.setSize(new Dimension(1366, 768));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //window.setUndecorated(true);
+        window.setUndecorated(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         gamePanel = new EnemyGamePanel(window.getPreferredSize());
