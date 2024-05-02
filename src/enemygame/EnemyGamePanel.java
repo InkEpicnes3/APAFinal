@@ -21,6 +21,8 @@ public class EnemyGamePanel extends JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
 
         drawables.forEach(d -> d.draw(g));
+
+        Toolkit.getDefaultToolkit().sync();
     }
 
     public void addDrawable(Drawable d) {

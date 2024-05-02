@@ -9,7 +9,7 @@ public class GameTickManager {
         gameTickObjects = new ArrayList<>();
     }
 
-    public void update() {
+    public void tick() {
         gameTickObjects.forEach(GameTick::tick);
     }
 

@@ -31,8 +31,10 @@ public class EnemyGame implements Runnable {
         thread = new Thread(this);
         tickManager = new GameTickManager();
 
-        player = new Player();
+        player = new Player(new Point(500, 500), new Dimension(100, 100), 10);
         tickManager.add(player);
+        gamePanel.addDrawable(player);
+        window.addKeyListener(player);
 
         thread.start();
         window.setVisible(true);
@@ -41,6 +43,7 @@ public class EnemyGame implements Runnable {
     @Override
     public void run() {
         while (!gameQuit) {
+            tickManager.tick();
             gamePanel.repaint();
 
             try {
