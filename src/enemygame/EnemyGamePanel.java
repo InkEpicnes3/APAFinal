@@ -1,18 +1,17 @@
 package enemygame;
 
-import enemygame.gui.Drawable;
+import enemygame.gui.DrawableManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class EnemyGamePanel extends JPanel {
-    private final ArrayList<Drawable> drawables;
+    private final DrawableManager drawables;
 
     public EnemyGamePanel(Dimension size) {
-        super(null, true);
+        super();
         setPreferredSize(size);
-        drawables = new ArrayList<>();
+        drawables = new DrawableManager();
     }
 
     protected void paintComponent(Graphics g) {
@@ -20,16 +19,12 @@ public class EnemyGamePanel extends JPanel {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        drawables.forEach(d -> d.draw(g));
+        drawables.drawAll(g);
 
         Toolkit.getDefaultToolkit().sync();
     }
 
-    public void addDrawable(Drawable d) {
-        drawables.add(d);
-    }
-
-    public void removeDrawable(Drawable d) {
-        drawables.remove(d);
+    public DrawableManager getDrawableManager() {
+        return drawables;
     }
 }

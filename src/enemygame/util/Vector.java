@@ -1,4 +1,4 @@
-package enemygame.logic;
+package enemygame.util;
 
 public class Vector {
     private double x;
@@ -7,6 +7,11 @@ public class Vector {
     public Vector(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Vector(DoublePoint p1, DoublePoint p2) {
+        this.x = p2.getX() - p1.getX();
+        this.y = p2.getY() - p1.getY();
     }
 
     public Vector() {
@@ -26,8 +31,8 @@ public class Vector {
 
     public void normalize() {
         double totalLength = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        x /= totalLength;
-        y /= totalLength;
+        if (x != 0) x /= totalLength;
+        if (y != 0) y /= totalLength;
     }
 
     public double getY() {
