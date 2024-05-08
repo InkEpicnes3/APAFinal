@@ -9,9 +9,7 @@ public class Enemy extends Entity {
     private Entity target;
 
     public Enemy(DoublePoint position, Player target) {
-        this.position = position;
-        this.size = new Dimension(100, 100);
-        this.speed = 5;
+        super(position, new Dimension(50, 50), 4);
         this.target = target;
     }
 

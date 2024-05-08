@@ -9,7 +9,7 @@ public class Projectile extends Entity {
     private int damage;
 
     public Projectile(DoublePoint position, Vector velocity, int damage) {
-        super(position, new Dimension(60, 60), 8);
+        super(position, new Dimension(25, 25), 8);
         velocity.setLength(speed);
         this.velocity = velocity;
         this.damage = damage;

@@ -1,8 +1,7 @@
 package enemygame.util;
 
 public class Vector {
-    private double x;
-    private double y;
+    private double x, y;
 
     public Vector(double x, double y) {
         this.x = x;
@@ -30,7 +29,7 @@ public class Vector {
     }
 
     public void normalize() {
-        double totalLength = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        double totalLength = Math.hypot(x, y);
         if (x != 0) x /= totalLength;
         if (y != 0) y /= totalLength;
     }

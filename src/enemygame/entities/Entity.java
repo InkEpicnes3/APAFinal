@@ -55,6 +55,10 @@ public abstract class Entity implements GameTick, Collision, Drawable {
         return position;
     }
 
+    public void setPosition(DoublePoint position) {
+        this.position = position;
+    }
+
     public int getHealth() {
         return health;
     }

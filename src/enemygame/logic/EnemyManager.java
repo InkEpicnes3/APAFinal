@@ -12,7 +12,6 @@ public class EnemyManager implements GameTick {
     private final ArrayList<Enemy> removalQueue;
 
     private final Dimension screenSize;
-    private final int minOnScreenXPos, maxOnScreenXPos;
     private final int offScreenSpawnRange;
 
     private final int spawnCooldown = 60;
@@ -25,8 +24,6 @@ public class EnemyManager implements GameTick {
         removalQueue = new ArrayList<>();
         this.screenSize = screenSize;
         this.offScreenSpawnRange = offScreenSpawnRange;
-        minOnScreenXPos = -100;
-        maxOnScreenXPos = (int) screenSize.getWidth() + 100;
     }
 
     @Override
@@ -50,6 +47,10 @@ public class EnemyManager implements GameTick {
         if (currentSpawnCooldown > 0 || numSpawnedEnemies > maxEnemies)
             return;
 
+        Enemy e = new Enemy(new DoublePoint(), EnemyGame.getPlayer());
+        int minOnScreenXPos = (int) (-e.getSize().getWidth());
+        int maxOnScreenXPos = (int) (screenSize.getWidth() + e.getSize().getWidth());
+
         int enemyX = (int) (Math.random() * (screenSize.getWidth() + offScreenSpawnRange * 2)) - offScreenSpawnRange;
         int enemyY;
         if (enemyX >= minOnScreenXPos && enemyX <= maxOnScreenXPos) {
@@ -63,7 +64,8 @@ public class EnemyManager implements GameTick {
             enemyY = (int) (Math.random() * (screenSize.getHeight() + offScreenSpawnRange * 2)) - offScreenSpawnRange;
         }
 
-        enemies.add(new Enemy(new DoublePoint(enemyX, enemyY), EnemyGame.getPlayer()));
+        e.setPosition(new DoublePoint(enemyX, enemyY));
+        enemies.add(e);
         numSpawnedEnemies++;
         currentSpawnCooldown = spawnCooldown;
     }
