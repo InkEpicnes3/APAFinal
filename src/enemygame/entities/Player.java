@@ -16,8 +16,8 @@ public class Player extends Entity {
     private final int fireCooldown = 10;
     private int currentFireCooldown = 0;
 
-    public Player(DoublePoint position, Dimension size, int speed) {
-        super(position, size, speed);
+    public Player(DoublePoint position) {
+        super(position, new Dimension(50, 50), 6);
         input = EnemyGame.getInput();
         projectileManager = EnemyGame.getProjectileManager();
     }
@@ -34,25 +34,30 @@ public class Player extends Entity {
         if (input.isKeyPressed(KeyEvent.VK_D))
             velocity.add(new Vector(1, 0));
         velocity.setLength(speed);
+        move();
+
+        if (position.getX() < 0)
+            position.setX(0);
+        if (position.getX() > EnemyGame.getWindow().getWidth() - size.getWidth())
+            position.setX(EnemyGame.getWindow().getWidth() - size.getWidth());
+        if (position.getY() < 0)
+            position.setY(0);
+        if (position.getY() > EnemyGame.getWindow().getHeight() - size.getHeight())
+            position.setY(EnemyGame.getWindow().getHeight() - size.getHeight());
 
         currentFireCooldown--;
         if (input.isMousePressed() && currentFireCooldown <= 0) {
             currentFireCooldown = fireCooldown;
             projectileManager.addProjectile(
                     new Projectile(new DoublePoint((int) position.getX(), (int) position.getY()),
-                                   new Vector(position, input.getMousePosition()), 20));
+                            new Vector(position, input.getMousePosition()), 20));
         }
 
-        move();
     }
 
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.MAGENTA);
         g.fillRect((int) position.getX(), (int) position.getY(), (int) size.getWidth(), (int) size.getHeight());
-
-        g.setColor(Color.WHITE);
-        g.drawString(String.format("%f, %f", velocity.getX(), velocity.getY()), (int) position.getX(),
-                (int) position.getY());
     }
 }

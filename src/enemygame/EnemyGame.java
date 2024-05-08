@@ -12,6 +12,7 @@ import enemygame.util.Vector;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 public class EnemyGame implements Runnable {
     private static JFrame window;
@@ -22,12 +23,12 @@ public class EnemyGame implements Runnable {
     private static ProjectileManager projectileManager;
 
     private static Player player;
-    private final Thread thread;
+    private final Thread gameThread;
     private boolean gameQuit;
 
     public EnemyGame() {
         window = new JFrame("Enemy Game");
-        window.setPreferredSize(new Dimension(1920, 1080));
+        window.setPreferredSize(new Dimension(1366, 768));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setUndecorated(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -37,16 +38,16 @@ public class EnemyGame implements Runnable {
         window.pack();
 
         gameQuit = false;
-        thread = new Thread(this);
+        gameThread = new Thread(this);
         input = new InputManager(window);
 
         enemyManager = new EnemyManager(window.getPreferredSize(), 300);
 
         projectileManager = new ProjectileManager();
 
-        player = new Player(new DoublePoint(500, 500), new Dimension(100, 100), 10);
+        player = new Player(new DoublePoint(500, 500));
 
-        thread.start();
+        gameThread.start();
         window.setVisible(true);
     }
 
@@ -72,11 +73,13 @@ public class EnemyGame implements Runnable {
                 gameQuit = true;
 
             try {
-                Thread.sleep(16);
+                gameThread.sleep(16);
             }
             catch (InterruptedException ignored) {
             }
         }
+        // https://stackoverflow.com/questions/1234912/how-to-programmatically-close-a-jframe
+        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
     }
 
     public static JFrame getWindow() {
