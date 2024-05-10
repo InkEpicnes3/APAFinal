@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 public class EnemyGame implements Runnable {
     private static JFrame window;
@@ -24,7 +25,6 @@ public class EnemyGame implements Runnable {
 
     private static Player player;
     private final Thread gameThread;
-    private boolean gameQuit;
 
     public EnemyGame() {
         window = new JFrame("Enemy Game");
@@ -32,12 +32,13 @@ public class EnemyGame implements Runnable {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setUndecorated(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        // https://stackoverflow.com/questions/1984071/how-to-hide-cursor-in-a-swing-application
+        window.setCursor(window.getToolkit().createCustomCursor(new BufferedImage( 1, 1, BufferedImage.TYPE_INT_ARGB), new Point(), null));
 
         gamePanel = new EnemyGamePanel(window.getPreferredSize());
         window.add(gamePanel);
         window.pack();
 
-        gameQuit = false;
         gameThread = new Thread(this);
         input = new InputManager(window);
 
@@ -53,7 +54,7 @@ public class EnemyGame implements Runnable {
 
     @Override
     public void run() {
-        while (!gameQuit) {
+        while (!input.isKeyPressed(KeyEvent.VK_F8)) {
             enemyManager.trySpawnEnemy();
             enemyManager.tick();
             projectileManager.tick();
@@ -68,9 +69,6 @@ public class EnemyGame implements Runnable {
                         e.damage(p.getDamage());
                         projectileManager.queueForRemoval(p);
                     }
-
-            if (input.isKeyPressed(KeyEvent.VK_F8))
-                gameQuit = true;
 
             try {
                 gameThread.sleep(16);

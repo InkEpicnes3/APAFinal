@@ -1,16 +1,19 @@
 package enemygame.entities;
 
+import enemygame.EnemyGame;
+import enemygame.gui.Drawable;
 import enemygame.util.DoublePoint;
 import enemygame.util.Vector;
 
 import java.awt.*;
 
-public class Enemy extends Entity {
+public class Enemy extends Entity implements Drawable {
     private Entity target;
 
     public Enemy(DoublePoint position, Player target) {
         super(position, new Dimension(50, 50), 4);
         this.target = target;
+        EnemyGame.getGamePanel().getDrawableManager().add(this);
     }
 
     @Override

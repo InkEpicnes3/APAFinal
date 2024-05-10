@@ -1,6 +1,7 @@
 package enemygame.entities;
 
 import enemygame.EnemyGame;
+import enemygame.gui.Drawable;
 import enemygame.logic.InputManager;
 import enemygame.logic.ProjectileManager;
 import enemygame.util.DoublePoint;
@@ -9,7 +10,7 @@ import enemygame.util.Vector;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Player extends Entity {
+public class Player extends Entity implements Drawable {
     private final InputManager input;
     private final ProjectileManager projectileManager;
 
@@ -20,6 +21,7 @@ public class Player extends Entity {
         super(position, new Dimension(50, 50), 6);
         input = EnemyGame.getInput();
         projectileManager = EnemyGame.getProjectileManager();
+        EnemyGame.getGamePanel().getDrawableManager().add(this);
     }
 
     @Override

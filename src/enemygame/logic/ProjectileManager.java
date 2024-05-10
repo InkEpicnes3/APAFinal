@@ -19,7 +19,7 @@ public class ProjectileManager implements GameTick {
         projectiles.forEach(GameTick::tick);
         for (Projectile p : removalQueue) {
             projectiles.remove(p);
-            EnemyGame.getGamePanel().getDrawableManager().remove(p);
+            EnemyGame.getGamePanel().getDrawableManager().remove(p.getSprite());
         }
         removalQueue.clear();
 
@@ -29,6 +29,7 @@ public class ProjectileManager implements GameTick {
                     || p.getPosition().getY() > EnemyGame.getWindow().getHeight()
                     || p.getPosition().getY() < -p.getSize().getHeight())
                 queueForRemoval(p);
+            p.getSprite().tick();
         });
     }
 
