@@ -9,7 +9,7 @@ import enemygame.util.Vector;
 
 import java.awt.*;
 
-public abstract class Entity implements GameTick, Collision, Drawable {
+public abstract class Entity implements GameTick, Collision {
     protected DoublePoint position;
     protected Dimension size;
     protected Vector velocity;
@@ -23,7 +23,7 @@ public abstract class Entity implements GameTick, Collision, Drawable {
         this.velocity = new Vector();
         this.health = 100;
 
-        EnemyGame.getGamePanel().getDrawableManager().add(this);
+        //EnemyGame.getGamePanel().getDrawableManager().add(this);
     }
 
     public Entity() {
