@@ -1,6 +1,7 @@
-package enemygame.gui;
+package enemygame.gui.sprite;
 
 import enemygame.EnemyGame;
+import enemygame.gui.Drawable;
 import enemygame.util.DoublePoint;
 
 import java.awt.*;
