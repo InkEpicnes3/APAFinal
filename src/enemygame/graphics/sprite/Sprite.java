@@ -1,7 +1,7 @@
-package enemygame.gui.sprite;
+package enemygame.graphics.sprite;
 
 import enemygame.EnemyGame;
-import enemygame.gui.Drawable;
+import enemygame.interfaces.Drawable;
 import enemygame.util.DoublePoint;
 
 import java.awt.*;
@@ -10,13 +10,15 @@ import java.awt.image.BufferedImage;
 public class Sprite implements Drawable {
     private DoublePoint position;
     private Dimension size;
+    private int drawLayer;
     private BufferedImage image;
 
-    public Sprite(DoublePoint position, Dimension size, BufferedImage image) {
+    public Sprite(DoublePoint position, Dimension size, int drawLayer, BufferedImage image) {
         this.position = position;
         this.size = size;
+        this.drawLayer = drawLayer;
         this.image = image;
-        EnemyGame.getGamePanel().getDrawableManager().add(this);
+        EnemyGame.getGamePanel().addDrawable(drawLayer, this);
     }
 
     @Override
@@ -38,6 +40,10 @@ public class Sprite implements Drawable {
 
     public void setSize(Dimension size) {
         this.size = size;
+    }
+
+    public int getDrawLayer() {
+        return drawLayer;
     }
 
     public BufferedImage getImage() {

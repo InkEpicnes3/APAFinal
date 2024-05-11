@@ -1,4 +1,4 @@
-package enemygame.logic;
+package enemygame.managers;
 
 import enemygame.util.DoublePoint;
 

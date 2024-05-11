@@ -1,8 +1,8 @@
-package enemygame.gui.sprite;
+package enemygame.graphics.sprite;
 
 import enemygame.EnemyGame;
-import enemygame.gui.Drawable;
-import enemygame.logic.GameTick;
+import enemygame.interfaces.Drawable;
+import enemygame.interfaces.GameTick;
 import enemygame.util.DoublePoint;
 
 import java.awt.*;
@@ -11,18 +11,21 @@ import java.util.HashMap;
 public class AnimatedSprite implements Drawable, GameTick {
     private DoublePoint position;
     private Dimension size;
-    private final HashMap<String, AnimatedSpriteFrames> animations;
-    private AnimatedSpriteFrames currentAnimation;
+    private final int drawLayer;
+    private final HashMap<String, SpriteAnimation> animations;
+    private SpriteAnimation currentAnimation;
     private int currentSpriteFrames, currentSpriteIndex;
 
-    public AnimatedSprite(DoublePoint position, Dimension size, AnimatedSpriteFrames... animations) {
+    public AnimatedSprite(DoublePoint position, Dimension size, int drawLayer, SpriteAnimation... animations) {
         this.position = position;
         this.size = size;
         this.animations = new HashMap<>();
-        for (AnimatedSpriteFrames f : animations)
+        for (SpriteAnimation f : animations)
             this.animations.put(f.getAnimName(), f);
+        this.drawLayer = drawLayer;
         changeAnimTo(animations[0].getAnimName());
-        EnemyGame.getGamePanel().getDrawableManager().add(this);
+        EnemyGame.getGamePanel().addDrawable(drawLayer, this);
+        EnemyGame.getSpriteManager().addAnimatedSprite(this);
     }
 
     public void changeAnimTo(String animName) {
@@ -32,7 +35,7 @@ public class AnimatedSprite implements Drawable, GameTick {
     }
 
     @Override
-    public void tick() {
+    public void tick(double frameTime) {
         currentSpriteFrames++;
         if (currentSpriteFrames == currentAnimation.getFramesPerSprite()) {
             currentSpriteFrames = 0;
@@ -73,5 +76,9 @@ public class AnimatedSprite implements Drawable, GameTick {
 
     public void setSize(Dimension size) {
         this.size = size;
+    }
+
+    public int getDrawLayer() {
+        return drawLayer;
     }
 }

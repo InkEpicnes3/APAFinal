@@ -1,55 +1,51 @@
 package enemygame.entities;
 
-import enemygame.gui.sprite.AnimatedSprite;
-import enemygame.gui.sprite.AnimatedSpriteFrames;
+import enemygame.EnemyGame;
+import enemygame.graphics.GamePanel;
+import enemygame.graphics.sprite.AnimatedSprite;
+import enemygame.graphics.sprite.SpriteAnimation;
+import enemygame.managers.ImageManager;
 import enemygame.util.DoublePoint;
-import enemygame.util.ImageLoader;
 import enemygame.util.Vector;
 
 import java.awt.*;
 
 public class Projectile extends Entity {
-    private int damage;
     private final AnimatedSprite sprite;
+    private boolean hasCollided;
 
-    public Projectile(DoublePoint position, Vector velocity, int damage) {
-        super(position, new Dimension(30, 30), 8);
-        velocity.setLength(speed);
-        this.velocity = velocity;
+    public Projectile(DoublePoint position, Vector direction, int damage) {
+        super(position, new Dimension(30, 30), 600, -1);
+        direction.setLength(speed);
+        this.velocity = direction;
         this.damage = damage;
-        sprite = new AnimatedSprite(position, size,
-                new AnimatedSpriteFrames("RedProjectileSpin", 6, false,
-                        ImageLoader.load("projectile_red_spin_1.png"),
-                        ImageLoader.load("projectile_red_spin_4.png"),
-                        ImageLoader.load("projectile_red_spin_2.png"),
-                        ImageLoader.load("projectile_red_spin_3.png")),
-                new AnimatedSpriteFrames("GreenProjectileSpin", 6, false,
-                        ImageLoader.load("projectile_green_spin_1.png"),
-                        ImageLoader.load("projectile_green_spin_4.png"),
-                        ImageLoader.load("projectile_green_spin_2.png"),
-                        ImageLoader.load("projectile_green_spin_3.png")));
+        sprite = new AnimatedSprite(position, size, GamePanel.LAYER_PROJECTILE,
+                new SpriteAnimation("BlueProjectileSpin", 6, true,
+                        ImageManager.PROJECTILE_BLUE_SPIN_1,
+                        ImageManager.PROJECTILE_BLUE_SPIN_4,
+                        ImageManager.PROJECTILE_BLUE_SPIN_2,
+                        ImageManager.PROJECTILE_BLUE_SPIN_3));
+        hasCollided = false;
     }
 
     @Override
-    public void tick() {
-        move();
-        if (sprite.isDone()) {
-            if (sprite.getCurrentAnimationName().equals("RedProjectileSpin"))
-                sprite.changeAnimTo("GreenProjectileSpin");
-            else
-                sprite.changeAnimTo("RedProjectileSpin");
-        }
+    public void tick(double frameTime) {
+        applyVelocity(frameTime);
     }
 
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void kill() {
+        EnemyGame.getSpriteManager().removeAnimatedSprite(sprite);
     }
 
     public AnimatedSprite getSprite() {
         return sprite;
+    }
+
+    public void markCollided() {
+        hasCollided = true;
+    }
+
+    public boolean hasCollided() {
+        return hasCollided;
     }
 }

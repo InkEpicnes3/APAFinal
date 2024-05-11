@@ -1,39 +1,38 @@
 package enemygame.entities;
 
 import enemygame.EnemyGame;
-import enemygame.gui.Drawable;
+import enemygame.graphics.GamePanel;
+import enemygame.graphics.sprite.Sprite;
+import enemygame.managers.ImageManager;
 import enemygame.util.DoublePoint;
 import enemygame.util.Vector;
 
 import java.awt.*;
 
-public class Enemy extends Entity implements Drawable {
+public class Enemy extends Entity {
     private Entity target;
+    private Sprite sprite;
 
-    public Enemy(DoublePoint position, Player target) {
-        super(position, new Dimension(50, 50), 4);
+    public Enemy(DoublePoint position, Entity target) {
+        super(position, new Dimension(50, 50), 200, 100);
+        this.damage = 10;
         this.target = target;
-        EnemyGame.getGamePanel().getDrawableManager().add(this);
+        this.sprite = new Sprite(position, size, GamePanel.LAYER_ENEMY, ImageManager.RED_FACE);
     }
 
     @Override
-    public void tick() {
+    public void tick(double frameTime) {
         velocity = new Vector(this.position, target.position);
         velocity.setLength(speed);
-        move();
+        applyVelocity(frameTime);
     }
 
-    @Override
-    public void draw(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect((int) position.getX(), (int) position.getY(), (int) size.getWidth(), (int) size.getHeight());
+    public void kill() {
+        EnemyGame.getGamePanel().removeDrawable(sprite.getDrawLayer(), sprite);
     }
 
-    public Entity getTarget() {
-        return target;
-    }
-
-    public void setTarget(Entity target) {
-        this.target = target;
+    public void setPosition(DoublePoint position) {
+        super.setPosition(position);
+        sprite.setPosition(position);
     }
 }
