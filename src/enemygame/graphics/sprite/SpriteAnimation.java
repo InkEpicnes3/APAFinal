@@ -1,16 +1,16 @@
-package enemygame.gui.sprite;
+package enemygame.graphics.sprite;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AnimatedSpriteFrames {
+public class SpriteAnimation {
     private final String animName;
     private final int framesPerSprite;
     private final boolean repeating;
     private final ArrayList<BufferedImage> sprites;
 
-    public AnimatedSpriteFrames(String animName, int framesPerSprite, boolean repeating, BufferedImage... spriteImages) {
+    public SpriteAnimation(String animName, int framesPerSprite, boolean repeating, BufferedImage... spriteImages) {
         this.animName = animName;
         this.framesPerSprite = framesPerSprite;
         this.repeating = repeating;
@@ -38,3 +38,4 @@ public class AnimatedSpriteFrames {
         return sprites.get(spriteIndex);
     }
 }
+

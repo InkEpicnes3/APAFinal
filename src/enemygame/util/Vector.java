@@ -30,8 +30,10 @@ public class Vector {
 
     public void normalize() {
         double totalLength = Math.hypot(x, y);
-        if (x != 0) x /= totalLength;
-        if (y != 0) y /= totalLength;
+        if (x != 0)
+            x /= totalLength;
+        if (y != 0)
+            y /= totalLength;
     }
 
     public double getY() {
@@ -48,5 +50,13 @@ public class Vector {
 
     public void setX(double x) {
         this.x = x;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

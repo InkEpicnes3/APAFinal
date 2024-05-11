@@ -1,13 +1,12 @@
 package enemygame;
 
-import enemygame.entities.Enemy;
 import enemygame.entities.Player;
-import enemygame.entities.Projectile;
-import enemygame.logic.EnemyManager;
-import enemygame.logic.InputManager;
-import enemygame.logic.ProjectileManager;
+import enemygame.graphics.GamePanel;
+import enemygame.logic.EnemySpawner;
+import enemygame.managers.AnimatedSpriteManager;
+import enemygame.managers.EntityManager;
+import enemygame.managers.InputManager;
 import enemygame.util.DoublePoint;
-import enemygame.util.Vector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,61 +16,65 @@ import java.awt.image.BufferedImage;
 
 public class EnemyGame implements Runnable {
     private static JFrame window;
-    private static EnemyGamePanel gamePanel;
+    private static GamePanel gamePanel;
+    private static Thread gameThread;
 
     private static InputManager input;
-    private static EnemyManager enemyManager;
-    private static ProjectileManager projectileManager;
-
-    private static Player player;
-    private final Thread gameThread;
+    private static EntityManager entityManager;
+    private static AnimatedSpriteManager spriteManager;
+    private static EnemySpawner spawner;
 
     public EnemyGame() {
         window = new JFrame("Enemy Game");
         window.setPreferredSize(new Dimension(1366, 768));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setUndecorated(true);
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        window.setResizable(false);
         // https://stackoverflow.com/questions/1984071/how-to-hide-cursor-in-a-swing-application
-        window.setCursor(window.getToolkit().createCustomCursor(new BufferedImage( 1, 1, BufferedImage.TYPE_INT_ARGB), new Point(), null));
+        window.setCursor(window.getToolkit()
+                .createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(), null));
 
-        gamePanel = new EnemyGamePanel(window.getPreferredSize());
+        gamePanel = new GamePanel(window.getPreferredSize());
         window.add(gamePanel);
         window.pack();
 
-        gameThread = new Thread(this);
         input = new InputManager(window);
+        entityManager = new EntityManager();
+        entityManager.setPlayer(new Player(new DoublePoint(500, 500)));
+        spriteManager = new AnimatedSpriteManager();
+        spawner = new EnemySpawner();
 
-        enemyManager = new EnemyManager(window.getPreferredSize(), 300);
-
-        projectileManager = new ProjectileManager();
-
-        player = new Player(new DoublePoint(500, 500));
-
-        gameThread.start();
+        window.setLocationRelativeTo(null);
         window.setVisible(true);
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     @Override
     public void run() {
-        while (!input.isKeyPressed(KeyEvent.VK_F8)) {
-            enemyManager.trySpawnEnemy();
-            enemyManager.tick();
-            projectileManager.tick();
-            player.tick();
-            gamePanel.repaint();
+        // https://www.youtube.com/watch?v=VpH33Uw-_0E&list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq&index=2
+        // Construct the second game loop (delta)
+        int targetFPS = 60;
+        long loopStartTime, nextLoopTime;
+        double frameTime = 0;
 
-            for (Enemy e : enemyManager.getEnemies())
-                for (Projectile p : projectileManager.getProjectiles())
-                    if (p.collidesWith(e)) {
-                        e.getVelocity().add(new Vector(p.getVelocity().getX() * 5, p.getVelocity().getY() * 5));
-                        e.move();
-                        e.damage(p.getDamage());
-                        projectileManager.queueForRemoval(p);
-                    }
+        while (!input.isKeyPressed(KeyEvent.VK_F8)) {
+            loopStartTime = System.nanoTime();
+            nextLoopTime = loopStartTime + (int) (1d / targetFPS * 1_000_000_000);
+
+            window.repaint();
+            entityManager.tick(frameTime);
+            spriteManager.tick(frameTime);
+            spawner.tick(frameTime);
+            spawner.spawnEnemy();
+
+            long remainingTimeMs = (nextLoopTime - System.nanoTime()) / 1_000_000;
+            if (remainingTimeMs < 0)
+                remainingTimeMs = 0;
+            frameTime = remainingTimeMs / 1000d;
 
             try {
-                gameThread.sleep(16);
+                Thread.sleep(remainingTimeMs);
             }
             catch (InterruptedException ignored) {
             }
@@ -84,7 +87,7 @@ public class EnemyGame implements Runnable {
         return window;
     }
 
-    public static EnemyGamePanel getGamePanel() {
+    public static GamePanel getGamePanel() {
         return gamePanel;
     }
 
@@ -92,16 +95,12 @@ public class EnemyGame implements Runnable {
         return input;
     }
 
-    public static Player getPlayer() {
-        return player;
+    public static EntityManager getEntityManager() {
+        return entityManager;
     }
 
-    public static EnemyManager getEnemyManager() {
-        return enemyManager;
-    }
-
-    public static ProjectileManager getProjectileManager() {
-        return projectileManager;
+    public static AnimatedSpriteManager getSpriteManager() {
+        return spriteManager;
     }
 
     public static void main(String[] args) {
