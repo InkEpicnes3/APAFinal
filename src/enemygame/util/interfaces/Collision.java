@@ -1,4 +1,4 @@
-package enemygame.interfaces;
+package enemygame.util.interfaces;
 
 import java.awt.*;
 

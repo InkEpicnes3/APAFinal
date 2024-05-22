@@ -13,6 +13,10 @@ public class Vector {
         this.y = p2.getY() - p1.getY();
     }
 
+    public Vector(Vector v) {
+        this(v.x, v.y);
+    }
+
     public Vector() {
         this(0.0, 0.0);
     }
@@ -50,13 +54,5 @@ public class Vector {
 
     public void setX(double x) {
         this.x = x;
-    }
-
-    @Override
-    public String toString() {
-        return "Vector{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
     }
 }

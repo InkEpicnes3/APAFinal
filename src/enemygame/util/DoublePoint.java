@@ -18,6 +18,10 @@ public class DoublePoint {
         this.y = p.getY();
     }
 
+    public DoublePoint(DoublePoint p) {
+        this(p.x, p.y);
+    }
+
     public DoublePoint() {
         this(0.0, 0.0);
     }
