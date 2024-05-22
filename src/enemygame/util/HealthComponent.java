@@ -1,23 +1,26 @@
 package enemygame.util;
 
 public class HealthComponent {
-    private int maxHealth, currentHealth;
+    private final double maxHealth;
+    private double currentHealth;
 
-    public HealthComponent(int maxHealth) {
+    public HealthComponent(double maxHealth, double currentHealth) {
         this.maxHealth = maxHealth;
-        this.currentHealth = maxHealth;
+        this.currentHealth = currentHealth;
     }
 
-    public void damage(int amount) {
+    public HealthComponent(double maxHealth) {
+        this(maxHealth, maxHealth);
+    }
+
+    public void damage(double amount) {
         currentHealth -= amount;
-        if (currentHealth < 0)
-            currentHealth = 0;
+        if (currentHealth < 0) currentHealth = 0;
     }
 
     public void heal(int amount) {
         currentHealth += amount;
-        if (currentHealth > maxHealth)
-            currentHealth = maxHealth;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
     }
 
     public boolean isDead() {

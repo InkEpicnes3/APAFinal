@@ -1,31 +1,26 @@
 package enemygame.entities;
 
-import enemygame.EnemyGame;
-import enemygame.graphics.GamePanel;
-import enemygame.graphics.sprite.AnimatedSprite;
-import enemygame.graphics.sprite.SpriteAnimation;
-import enemygame.managers.ImageManager;
+import enemygame.data.SpriteAnimations;
+import enemygame.graphics.DrawLayer;
+import enemygame.graphics.Sprite;
 import enemygame.util.DoublePoint;
 import enemygame.util.Vector;
 
 import java.awt.*;
 
 public class Projectile extends Entity {
-    private final AnimatedSprite sprite;
-    private boolean hasCollided;
+    private double knockbackMultiplier;
+    private final int maxHits;
+    private int numHits;
 
-    public Projectile(DoublePoint position, Vector direction, int damage) {
-        super(position, new Dimension(30, 30), 600, -1);
-        direction.setLength(speed);
-        this.velocity = direction;
-        this.damage = damage;
-        sprite = new AnimatedSprite(position, size, GamePanel.LAYER_PROJECTILE,
-                new SpriteAnimation("BlueProjectileSpin", 6, true,
-                        ImageManager.PROJECTILE_BLUE_SPIN_1,
-                        ImageManager.PROJECTILE_BLUE_SPIN_4,
-                        ImageManager.PROJECTILE_BLUE_SPIN_2,
-                        ImageManager.PROJECTILE_BLUE_SPIN_3));
-        hasCollided = false;
+    public Projectile(DoublePoint position, Vector direction, boolean fromPlayer) {
+        super(position, new Dimension(30, 30), 600, -1, 20, (fromPlayer) ? EntityType.PLAYER_PROJECTILE : EntityType.ENEMY_PROJECTILE);
+        direction.setLength(movementSpeed);
+        velocity = direction;
+        setSprite(new Sprite(position, size, DrawLayer.PROJECTILES, SpriteAnimations.BLUE_PROJECTILE_SPIN));
+        knockbackMultiplier = 5.0;
+        numHits = 0;
+        maxHits = 1;
     }
 
     @Override
@@ -33,19 +28,19 @@ public class Projectile extends Entity {
         applyVelocity(frameTime);
     }
 
-    public void kill() {
-        EnemyGame.getSpriteManager().removeAnimatedSprite(sprite);
+    public void hit() {
+        numHits++;
     }
 
-    public AnimatedSprite getSprite() {
-        return sprite;
+    public boolean hasReachedHitLimit() {
+        return numHits >= maxHits;
     }
 
-    public void markCollided() {
-        hasCollided = true;
+    public Vector getKnockback() {
+        return new Vector(velocity.getX() * knockbackMultiplier, velocity.getY() * knockbackMultiplier);
     }
 
-    public boolean hasCollided() {
-        return hasCollided;
+    public void setKnockbackMultiplier(double knockbackMultiplier) {
+        this.knockbackMultiplier = knockbackMultiplier;
     }
 }

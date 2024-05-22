@@ -1,35 +1,33 @@
 package enemygame.entities;
 
-import enemygame.EnemyGame;
-import enemygame.graphics.GamePanel;
-import enemygame.graphics.sprite.Sprite;
-import enemygame.managers.EntityManager;
-import enemygame.managers.ImageManager;
+import enemygame.data.Images;
+import enemygame.graphics.DrawLayer;
+import enemygame.graphics.Sprite;
 import enemygame.managers.InputManager;
 import enemygame.util.DoublePoint;
+import enemygame.EnemyGame;
 import enemygame.util.Vector;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player extends Entity {
-    private Sprite sprite;
-    private InputManager input;
-    private EntityManager entityManager;
+    private final InputManager input;
+    private double fireCooldown;
+    private double timeSinceFire;
 
-    private final int fireCooldown = 10;
-    private int currentFireCooldown = 0;
+    public Player(DoublePoint position, InputManager input) {
+        super(position, new Dimension(50, 50), 400, 100, 0, EntityType.PLAYER);
+        setSprite(new Sprite(this.position, this.size, DrawLayer.PLAYER, Images.PURPLE_FACE));
+        this.input = input;
 
-    public Player(DoublePoint position) {
-        super(position, new Dimension(50, 50), 400, 100);
-        sprite = new Sprite(position, size, GamePanel.LAYER_PLAYER, ImageManager.PURPLE_FACE);
-        input = EnemyGame.getInput();
-        entityManager = EnemyGame.getEntityManager();
-        entityManager.setPlayer(this);
+        fireCooldown = 0.1;
+        timeSinceFire = 0.0;
     }
 
     @Override
     public void tick(double frameTime) {
+        // Movement from input
         velocity = new Vector();
         if (input.isKeyPressed(KeyEvent.VK_W))
             velocity.add(new Vector(0, -1));
@@ -39,28 +37,25 @@ public class Player extends Entity {
             velocity.add(new Vector(-1, 0));
         if (input.isKeyPressed(KeyEvent.VK_D))
             velocity.add(new Vector(1, 0));
-        velocity.setLength(speed);
+        velocity.setLength(movementSpeed);
         applyVelocity(frameTime);
 
+        // Don't let player go offscreen
+        Dimension windowSize = EnemyGame.getWindowSize();
         if (position.getX() < 0)
             position.setX(0);
-        if (position.getX() > EnemyGame.getWindow().getWidth() - size.getWidth())
-            position.setX(EnemyGame.getWindow().getWidth() - size.getWidth());
+        if (position.getX() > windowSize.getWidth() - size.getWidth())
+            position.setX(windowSize.getWidth() - size.getWidth());
         if (position.getY() < 0)
             position.setY(0);
-        if (position.getY() > EnemyGame.getWindow().getHeight() - size.getHeight())
-            position.setY(EnemyGame.getWindow().getHeight() - size.getHeight());
+        if (position.getY() > windowSize.getHeight() - size.getHeight())
+            position.setY(windowSize.getHeight() - size.getHeight());
 
-        currentFireCooldown--;
-        if (input.isMousePressed() && currentFireCooldown <= 0) {
-            currentFireCooldown = fireCooldown;
-            Projectile p = new Projectile(new DoublePoint((int) position.getX(), (int) position.getY()),
-                    new Vector(position, input.getMousePosition()), 20);
-            entityManager.addPlayerProjectile(p);
+        // Shooting
+        timeSinceFire += frameTime;
+        if (input.isMousePressed() && timeSinceFire >= fireCooldown) {
+            EnemyGame.getEntityManager().addEntity(new Projectile(new DoublePoint(position), new Vector(this.position, input.getMousePosition()), true));
+            timeSinceFire = 0.0;
         }
-    }
-
-    public void kill() {
-
     }
 }
