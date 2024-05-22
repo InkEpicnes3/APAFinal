@@ -17,6 +17,8 @@ public class EnemyGame implements Runnable {
     private static JFrame window;
     private static GamePanel panel;
     private static Thread gameThread;
+    private static int gameScore = 0;
+    public static final String resFolder = System.getProperty("user.dir") + "/res/";
 
     private static InputManager input;
     private static SpriteManager spriteManager;
@@ -88,6 +90,14 @@ public class EnemyGame implements Runnable {
         }
         // https://stackoverflow.com/questions/1234912/how-to-programmatically-close-a-jframe
         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+    }
+
+    public static void incrementGameScore() {
+        gameScore++;
+    }
+
+    public static int getGameScore() {
+        return gameScore;
     }
 
     public static SpriteManager getSpriteManager() {

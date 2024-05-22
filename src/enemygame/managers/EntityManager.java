@@ -26,6 +26,7 @@ public class EntityManager implements GameTick {
 
         collidePlayerProjectiles();
         collideEnemyProjectiles();
+        collidePlayerWithCoins();
         removeInvalidProjectiles(getEntities(EntityType.PLAYER_PROJECTILE));
         removeInvalidProjectiles(getEntities(EntityType.ENEMY_PROJECTILE));
         removeDeadEnemies();
@@ -52,6 +53,15 @@ public class EntityManager implements GameTick {
                 Projectile projectile = (Projectile) p;
                 player.getVelocity().add(projectile.getKnockback());
                 projectile.hit();
+            }
+    }
+
+    private void collidePlayerWithCoins() {
+        ArrayList<Entity> coins = getEntities(EntityType.ITEM);
+        for (int i = 0; i < coins.size(); i++)
+            if (coins.get(i) instanceof Coin && getPlayer().collidesWith(coins.get(i))) {
+                coins.get(i).kill();
+                EnemyGame.incrementGameScore();
             }
     }
 

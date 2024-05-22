@@ -1,9 +1,7 @@
 package enemygame.graphics;
 
 import enemygame.EnemyGame;
-import enemygame.entities.EntityType;
 import enemygame.managers.DrawableManager;
-import enemygame.managers.EntityManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +10,7 @@ public class GamePanel extends JPanel {
     private static final DrawableManager drawableManager = new DrawableManager();
 
     private static final Color backgroundColor = new Color(11, 11, 11);
+    private static final Font scoreFont = new Font(Font.SANS_SERIF, Font.BOLD, 60);
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -20,18 +19,11 @@ public class GamePanel extends JPanel {
 
         drawableManager.draw(g);
 
-        drawDebug(g);
+        g.setColor(Color.WHITE);
+        g.setFont(scoreFont);
+        g.drawString("Score: " + EnemyGame.getGameScore(), getWidth() / 2 - 180, 70);
 
         Toolkit.getDefaultToolkit().sync();
-    }
-
-    private void drawDebug(Graphics g) {
-        // Info
-        EntityManager entityManager = EnemyGame.getEntityManager();
-        g.setColor(Color.WHITE);
-        g.drawString("Enemies: " + entityManager.getNumEntities(EntityType.ENEMY), 10, 20);
-        g.drawString("Player Projectiles: " + entityManager.getNumEntities(EntityType.PLAYER_PROJECTILE), 10, 35);
-        g.drawString("Enemy Projectiles: " + entityManager.getNumEntities(EntityType.ENEMY_PROJECTILE), 10, 50);
     }
 
     public static DrawableManager getDrawableManager() {
