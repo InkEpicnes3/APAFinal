@@ -2,37 +2,40 @@ package enemygame.logic;
 
 import enemygame.EnemyGame;
 import enemygame.entities.Enemy;
-import enemygame.interfaces.GameTick;
+import enemygame.entities.EntityType;
+import enemygame.managers.EntityManager;
 import enemygame.util.DoublePoint;
+import enemygame.util.interfaces.GameTick;
 
 import java.awt.*;
 
 public class EnemySpawner implements GameTick {
-    private Dimension screenSize;
-    private int offScreenSpawnRange;
-    private double spawnCooldownSeconds, timeSinceSpawnSeconds;
-    private int maxSpawnedEnemies;
+    private final EntityManager entityManager;
 
-    public EnemySpawner() {
-        screenSize = EnemyGame.getWindow().getPreferredSize();
-        offScreenSpawnRange = 300;
-        spawnCooldownSeconds = 0.5;
-        timeSinceSpawnSeconds = 0;
-        maxSpawnedEnemies = 30;
+    private double spawnCooldown;
+    private double timeSinceSpawn;
+
+    private int maxEnemies;
+
+    public EnemySpawner(double spawnCooldown, int maxEnemies, EntityManager entityManager) {
+        this.entityManager = entityManager;
+
+        this.spawnCooldown = spawnCooldown;
+        timeSinceSpawn = 0;
+
+        this.maxEnemies = maxEnemies;
     }
 
-    @Override
-    public void tick(double frameTime) {
-        timeSinceSpawnSeconds += frameTime;
-    }
-
-    public void spawnEnemy() {
-        if (timeSinceSpawnSeconds < spawnCooldownSeconds || EnemyGame.getEntityManager().getNumEnemies() >= maxSpawnedEnemies)
+    public void trySpawnEnemy() {
+        if (timeSinceSpawn < spawnCooldown || entityManager.getNumEntities(EntityType.ENEMY) >= maxEnemies)
             return;
 
-        Enemy e = new Enemy(new DoublePoint(), EnemyGame.getEntityManager().getPlayer());
-        int minOnScreenXPos = (int) (-e.getSize().getWidth());
-        int maxOnScreenXPos = (int) (screenSize.getWidth() + e.getSize().getWidth());
+        Enemy enemy = new Enemy(new DoublePoint(), entityManager.getPlayer());
+        Dimension screenSize = EnemyGame.getWindowSize();
+
+        int minOnScreenXPos = (int) (-enemy.getSize().getWidth());
+        int maxOnScreenXPos = (int) (screenSize.getWidth() + enemy.getSize().getWidth());
+        int offScreenSpawnRange = 300;
 
         int enemyX = (int) (Math.random() * (screenSize.getWidth() + offScreenSpawnRange * 2)) - offScreenSpawnRange;
         int enemyY;
@@ -47,8 +50,13 @@ public class EnemySpawner implements GameTick {
             enemyY = (int) (Math.random() * (screenSize.getHeight() + offScreenSpawnRange * 2)) - offScreenSpawnRange;
         }
 
-        e.setPosition(new DoublePoint(enemyX, enemyY));
-        EnemyGame.getEntityManager().addEnemy(e);
-        timeSinceSpawnSeconds = 0;
+        enemy.setPosition(new DoublePoint(enemyX, enemyY));
+        entityManager.addEntity(enemy);
+        timeSinceSpawn = 0;
+    }
+
+    @Override
+    public void tick(double frameTime) {
+        timeSinceSpawn += frameTime;
     }
 }

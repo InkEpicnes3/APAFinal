@@ -1,104 +1,100 @@
 package enemygame.managers;
 
-import enemygame.entities.Enemy;
-import enemygame.entities.Player;
-import enemygame.entities.Projectile;
-import enemygame.interfaces.GameTick;
-import enemygame.util.Vector;
+import enemygame.EnemyGame;
+import enemygame.entities.*;
+import enemygame.util.interfaces.GameTick;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EntityManager implements GameTick {
-    private Player player;
-    private final ArrayList<Enemy> enemies;
-    private final ArrayList<Projectile> playerProjectiles;
-    private final ArrayList<Projectile> enemyProjectiles;
+    private final HashMap<EntityType, ArrayList<Entity>> entities;
 
     public EntityManager() {
-        enemies = new ArrayList<>();
-        playerProjectiles = new ArrayList<>();
-        enemyProjectiles = new ArrayList<>();
+        entities = new HashMap<>();
+        for (EntityType type : EntityType.values())
+            entities.put(type, new ArrayList<>());
+        entities.get(EntityType.PLAYER).add(null);
     }
 
     @Override
     public void tick(double frameTime) {
-        player.tick(frameTime);
+        for (ArrayList<Entity> entityList : entities.values())
+            for (Entity e : entityList)
+                e.tick(frameTime);
 
-        for (int i = 0; i < enemies.size(); i++) {
-            Enemy e = enemies.get(i);
-            e.tick(frameTime);
-            if (e.getHealthComponent().isDead()) {
-                enemies.remove(e);
-                e.kill();
-            }
-        }
-        for (int i = 0; i < playerProjectiles.size(); i++) {
-            Projectile p = playerProjectiles.get(i);
-            p.tick(frameTime);
-            if (!p.isVisible() || p.hasCollided()) {
-                playerProjectiles.remove(p);
-                p.kill();
-            }
-        }
-        for (int i = 0; i < enemyProjectiles.size(); i++) {
-            Projectile p = enemyProjectiles.get(i);
-            p.tick(frameTime);
-            if (!p.isVisible() || p.hasCollided()) {
-                enemyProjectiles.remove(p);
-                p.kill();
-            }
-        }
+        collidePlayerProjectiles();
+        collideEnemyProjectiles();
+        removeInvalidProjectiles(getEntities(EntityType.PLAYER_PROJECTILE));
+        removeInvalidProjectiles(getEntities(EntityType.ENEMY_PROJECTILE));
+        removeDeadEnemies();
+    }
 
-        // Enemies hitting players with body
-        for (Enemy e : enemies)
-            if (e.collidesWith(player))
-                player.getHealthComponent().damage(e.getDamage());
-        // Enemy projectiles hitting player
-        for (Projectile p : enemyProjectiles)
-            if (p.collidesWith(player)) {
-                player.getHealthComponent().damage(p.getDamage());
-                p.markCollided();
-            }
-        // Player projectiles hitting enemies
-        for (Projectile p : playerProjectiles)
-            for (Enemy e : enemies)
-                if (p.collidesWith(e)) {
-                    e.getHealthComponent().damage(p.getDamage());
-                    e.setVelocity(new Vector(-e.getVelocity().getX() * 8, -e.getVelocity().getY() * 8));
-                    e.applyVelocity(frameTime);
-                    p.markCollided();
+    private void collidePlayerProjectiles() {
+        ArrayList<Entity> enemies = getEntities(EntityType.ENEMY);
+        ArrayList<Entity> playerProjectiles = getEntities(EntityType.PLAYER_PROJECTILE);
+        for (Entity e : enemies)
+            for (Entity p : playerProjectiles)
+                if (e instanceof Enemy && p instanceof Projectile && e.collidesWith(p)) {
+                    Projectile projectile = (Projectile) p;
+                    e.getVelocity().add(((Projectile) p).getKnockback());
+                    projectile.hit();
+                    e.getHealth().damage(p.getHitbox().getDamage());
                 }
     }
 
+    private void collideEnemyProjectiles() {
+        ArrayList<Entity> enemyProjectiles = getEntities(EntityType.ENEMY_PROJECTILE);
+        Player player = getPlayer();
+        for (Entity p : enemyProjectiles)
+            if (p instanceof Projectile && p.collidesWith(player)) {
+                Projectile projectile = (Projectile) p;
+                player.getVelocity().add(projectile.getKnockback());
+                projectile.hit();
+            }
+    }
+
+    private void removeInvalidProjectiles(ArrayList<Entity> projectiles) {
+        ArrayList<Projectile> invalidProjectiles = new ArrayList<>();
+        Rectangle screenRect = new Rectangle(new Point(), EnemyGame.getWindowSize());
+        for (Entity projectile : projectiles) {
+            Projectile p = (Projectile) projectile;
+            if (!p.getCollision().intersects(screenRect) || p.hasReachedHitLimit())
+                invalidProjectiles.add((Projectile) projectile);
+        }
+        invalidProjectiles.forEach(Projectile::kill);
+    }
+
+    private void removeDeadEnemies() {
+        ArrayList<Entity> enemies = getEntities(EntityType.ENEMY);
+        for (int i = 0; i < enemies.size(); i++) {
+            Entity e = enemies.get(i);
+            if (e instanceof Enemy && e.getHealth().isDead())
+                e.kill();
+        }
+    }
+
+    public void addEntity(Entity e) {
+        if (e.getType() == EntityType.PLAYER)
+            setPlayer((Player) e);
+        else
+            entities.get(e.getType()).add(e);
+    }
+
     public Player getPlayer() {
-        return player;
+        return (Player) entities.get(EntityType.PLAYER).get(0);
     }
 
     public void setPlayer(Player player) {
-        this.player = player;
+        entities.get(EntityType.PLAYER).set(0, player);
     }
 
-    public void addEnemy(Enemy e) {
-        enemies.add(e);
+    public int getNumEntities(EntityType entityType) {
+        return entities.get(entityType).size();
     }
 
-    public void addPlayerProjectile(Projectile p) {
-        playerProjectiles.add(p);
-    }
-
-    public void addEnemyProjectile(Projectile p) {
-        enemyProjectiles.add(p);
-    }
-
-    public int getNumEnemies() {
-        return enemies.size();
-    }
-
-    public int getNumPlayerProjectiles() {
-        return playerProjectiles.size();
-    }
-
-    public int getNumEnemyProjectiles() {
-        return enemyProjectiles.size();
+    public ArrayList<Entity> getEntities(EntityType entityType) {
+        return entities.get(entityType);
     }
 }

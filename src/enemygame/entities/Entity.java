@@ -1,60 +1,54 @@
 package enemygame.entities;
 
+import enemygame.graphics.Sprite;
+import enemygame.util.*;
+import enemygame.util.interfaces.GameTick;
 import enemygame.EnemyGame;
-import enemygame.graphics.sprite.Sprite;
-import enemygame.interfaces.Collision;
-import enemygame.interfaces.GameTick;
-import enemygame.util.DoublePoint;
-import enemygame.util.HealthComponent;
-import enemygame.util.Vector;
 
 import java.awt.*;
 
-public abstract class Entity implements GameTick, Collision {
-    protected DoublePoint position;
-    protected Dimension size;
+public abstract class Entity extends GameObject implements GameTick {
     protected Vector velocity;
-    protected int speed;
-    protected HealthComponent health;
-    protected int damage;
-    protected boolean isAlive;
+    protected double movementSpeed;
 
-    public Entity(DoublePoint position, Dimension size, int speed, int maxHealth) {
-        this.position = position;
-        this.size = size;
+    protected Sprite sprite;
+    protected HealthComponent health;
+    protected Hurtbox hurtbox;
+    protected Hitbox hitbox;
+
+    protected final EntityType type;
+
+    protected Entity(DoublePoint position, Dimension size, double movementSpeed, double health, double damage, EntityType type) {
+        super(position, size);
         this.velocity = new Vector();
-        this.speed = speed;
-        this.health = new HealthComponent(maxHealth);
-        this.damage = 0;
-        this.isAlive = false;
+        this.movementSpeed = movementSpeed;
+
+        this.health = new HealthComponent(health);
+        this.hurtbox = new Hurtbox(position, size);
+        this.hitbox = new Hitbox(position, size, damage);
+
+        this.type = type;
     }
 
-    abstract void kill();
+    public void kill() {
+        sprite.kill();
+        EnemyGame.getEntityManager().getEntities(type).remove(this);
+    }
 
     public void applyVelocity(double frameTime) {
         position.translate(velocity.getX() * frameTime, velocity.getY() * frameTime);
     }
 
-    public boolean isVisible() {
-        Dimension screenSize = EnemyGame.getGamePanel().getSize();
-        return (position.getX() + size.getWidth() > 0 && position.getX() < screenSize.getWidth()) &&
-                (position.getY() + size.getHeight() > 0 && position.getY() < screenSize.getHeight());
-    }
-
-    public DoublePoint getPosition() {
-        return position;
-    }
-
+    @Override
     public void setPosition(DoublePoint position) {
-        this.position = position;
+        super.setPosition(position);
+        sprite.setPosition(position);
     }
 
-    public Dimension getSize() {
-        return size;
-    }
-
+    @Override
     public void setSize(Dimension size) {
-        this.size = size;
+        super.setSize(size);
+        sprite.setSize(size);
     }
 
     public Vector getVelocity() {
@@ -65,28 +59,47 @@ public abstract class Entity implements GameTick, Collision {
         this.velocity = velocity;
     }
 
-    public int getSpeed() {
-        return speed;
+    public double getMovementSpeed() {
+        return movementSpeed;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setMovementSpeed(double movementSpeed) {
+        this.movementSpeed = movementSpeed;
     }
 
-    public int getDamage() {
-        return damage;
+    public Sprite getSprite() {
+        return sprite;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 
-    public HealthComponent getHealthComponent() {
+    public HealthComponent getHealth() {
         return health;
     }
 
-    @Override
-    public Rectangle getCollision() {
-        return new Rectangle(position.asAWTPoint(), size);
+    public void setHealth(HealthComponent health) {
+        this.health = health;
+    }
+
+    public Hurtbox getHurtbox() {
+        return hurtbox;
+    }
+
+    public void setHurtbox(Hurtbox hurtbox) {
+        this.hurtbox = hurtbox;
+    }
+
+    public Hitbox getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Hitbox hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public EntityType getType() {
+        return type;
     }
 }
