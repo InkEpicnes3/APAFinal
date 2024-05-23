@@ -1,17 +1,20 @@
-package enemygame.entities;
+package enemygame.entities.enemies;
 
 import enemygame.EnemyGame;
 import enemygame.data.Images;
 import enemygame.data.SpriteAnimations;
+import enemygame.entities.Entity;
+import enemygame.entities.projectiles.ExplodingProjectile;
 import enemygame.graphics.DrawLayer;
 import enemygame.graphics.Sprite;
-import enemygame.managers.EntityManager;
+import enemygame.logic.EntityManager;
 import enemygame.util.DoublePoint;
 import enemygame.util.Vector;
 
-public class DifficultEnemy extends Enemy {
-    public DifficultEnemy(DoublePoint position, Entity target) {
+public class RocketEnemy extends Enemy {
+    public RocketEnemy(DoublePoint position, Entity target) {
         super(position, target);
+        movementSpeed = 150;
         setSprite(new Sprite(position, size, DrawLayer.ENEMIES, Images.LIGHT_BLUE_FACE));
     }
 

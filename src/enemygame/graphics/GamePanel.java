@@ -1,7 +1,7 @@
 package enemygame.graphics;
 
 import enemygame.EnemyGame;
-import enemygame.managers.DrawableManager;
+import enemygame.logic.DrawableManager;
 import enemygame.util.DoublePoint;
 
 import javax.swing.*;

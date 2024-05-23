@@ -1,9 +1,10 @@
 package enemygame.entities;
 
 import enemygame.data.Images;
+import enemygame.entities.projectiles.Projectile;
 import enemygame.graphics.DrawLayer;
 import enemygame.graphics.Sprite;
-import enemygame.managers.InputManager;
+import enemygame.logic.InputManager;
 import enemygame.util.DoublePoint;
 import enemygame.EnemyGame;
 import enemygame.util.Vector;

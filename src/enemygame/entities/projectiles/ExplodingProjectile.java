@@ -1,6 +1,7 @@
-package enemygame.entities;
+package enemygame.entities.projectiles;
 
 import enemygame.EnemyGame;
+import enemygame.entities.EntityType;
 import enemygame.graphics.DrawLayer;
 import enemygame.graphics.Sprite;
 import enemygame.graphics.SpriteAnimation;
