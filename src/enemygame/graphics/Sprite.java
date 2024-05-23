@@ -83,6 +83,10 @@ public class Sprite extends GameObject implements Drawable, GameTick {
         return !currentAnimation.isRepeating() && currentSpriteIndex == currentAnimation.getNumFrames() - 1;
     }
 
+    public double getAnimationProgress() {
+        return (double) currentSpriteIndex / currentAnimation.getNumFrames();
+    }
+
     public String getCurrentAnimationName() {
         return currentAnimation.getName();
     }

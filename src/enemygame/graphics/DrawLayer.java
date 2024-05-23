@@ -4,5 +4,6 @@ public enum DrawLayer {
     BACKGROUND,
     ENEMIES,
     PROJECTILES,
-    PLAYER
+    PLAYER,
+    TOP
 }

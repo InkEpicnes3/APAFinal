@@ -4,18 +4,17 @@ import enemygame.EnemyGame;
 import enemygame.entities.*;
 import enemygame.util.interfaces.GameTick;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EntityManager implements GameTick {
     private final HashMap<EntityType, ArrayList<Entity>> entities;
+    private Player player;
 
     public EntityManager() {
         entities = new HashMap<>();
         for (EntityType type : EntityType.values())
             entities.put(type, new ArrayList<>());
-        entities.get(EntityType.PLAYER).add(null);
     }
 
     @Override
@@ -23,9 +22,11 @@ public class EntityManager implements GameTick {
         for (ArrayList<Entity> entityList : entities.values())
             for (Entity e : entityList)
                 e.tick(frameTime);
+        player.tick(frameTime);
 
         collidePlayerProjectiles();
         collideEnemyProjectiles();
+        collidePlayerWithEnemies();
         collidePlayerWithCoins();
         removeInvalidProjectiles(getEntities(EntityType.PLAYER_PROJECTILE));
         removeInvalidProjectiles(getEntities(EntityType.ENEMY_PROJECTILE));
@@ -37,23 +38,30 @@ public class EntityManager implements GameTick {
         ArrayList<Entity> playerProjectiles = getEntities(EntityType.PLAYER_PROJECTILE);
         for (Entity e : enemies)
             for (Entity p : playerProjectiles)
-                if (e instanceof Enemy && p instanceof Projectile && e.collidesWith(p)) {
+                if (e.getType() == EntityType.ENEMY && p.getType() == EntityType.PLAYER_PROJECTILE && p.collidesWith(e)) {
                     Projectile projectile = (Projectile) p;
                     e.getVelocity().add(((Projectile) p).getKnockback());
                     projectile.hit();
-                    e.getHealth().damage(p.getHitbox().getDamage());
+                    e.getHealth().damage(p.getDamage());
                 }
     }
 
     private void collideEnemyProjectiles() {
         ArrayList<Entity> enemyProjectiles = getEntities(EntityType.ENEMY_PROJECTILE);
-        Player player = getPlayer();
         for (Entity p : enemyProjectiles)
-            if (p instanceof Projectile && p.collidesWith(player)) {
+            if (p.getType() == EntityType.ENEMY_PROJECTILE && p.collidesWith(player)) {
                 Projectile projectile = (Projectile) p;
+                player.damage(p.getDamage());
                 player.getVelocity().add(projectile.getKnockback());
                 projectile.hit();
             }
+    }
+
+    private void collidePlayerWithEnemies() {
+        ArrayList<Entity> enemies = getEntities(EntityType.ENEMY);
+        for (Entity e : enemies)
+            if (e.getType() == EntityType.ENEMY && e.collidesWith(player))
+                player.damage(e.getDamage());
     }
 
     private void collidePlayerWithCoins() {
@@ -67,10 +75,9 @@ public class EntityManager implements GameTick {
 
     private void removeInvalidProjectiles(ArrayList<Entity> projectiles) {
         ArrayList<Projectile> invalidProjectiles = new ArrayList<>();
-        Rectangle screenRect = new Rectangle(new Point(), EnemyGame.getWindowSize());
         for (Entity projectile : projectiles) {
             Projectile p = (Projectile) projectile;
-            if (!p.getCollision().intersects(screenRect) || p.hasReachedHitLimit())
+            if (!p.isVisible() || p.hasReachedHitLimit())
                 invalidProjectiles.add((Projectile) projectile);
         }
         invalidProjectiles.forEach(Projectile::kill);
@@ -80,9 +87,21 @@ public class EntityManager implements GameTick {
         ArrayList<Entity> enemies = getEntities(EntityType.ENEMY);
         for (int i = 0; i < enemies.size(); i++) {
             Entity e = enemies.get(i);
-            if (e instanceof Enemy && e.getHealth().isDead())
+            if (e.getType() == EntityType.ENEMY && e.getHealth().isDead())
                 e.kill();
         }
+    }
+
+    public void clearAllEntities() {
+        for (ArrayList<Entity> entityList : entities.values())
+            for (int i = entityList.size() - 1; i >= 0; i--)
+                entityList.get(i).kill();
+        boolean newEntitiesSpawned = false;
+        for (ArrayList<Entity> entityList : entities.values())
+            if (entityList.size() != 0)
+                newEntitiesSpawned = true;
+        if (newEntitiesSpawned)
+            clearAllEntities();
     }
 
     public void addEntity(Entity e) {
@@ -93,11 +112,11 @@ public class EntityManager implements GameTick {
     }
 
     public Player getPlayer() {
-        return (Player) entities.get(EntityType.PLAYER).get(0);
+        return player;
     }
 
     public void setPlayer(Player player) {
-        entities.get(EntityType.PLAYER).set(0, player);
+        this.player = player;
     }
 
     public int getNumEntities(EntityType entityType) {

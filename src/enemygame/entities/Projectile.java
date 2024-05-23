@@ -9,18 +9,21 @@ import enemygame.util.Vector;
 import java.awt.*;
 
 public class Projectile extends Entity {
-    private double knockbackMultiplier;
-    private final int maxHits;
-    private int numHits;
+    protected double knockbackMultiplier;
+    protected int maxHits;
+    protected int numHits;
 
     public Projectile(DoublePoint position, Vector direction, boolean fromPlayer) {
-        super(position, new Dimension(30, 30), 600, -1, 20, (fromPlayer) ? EntityType.PLAYER_PROJECTILE : EntityType.ENEMY_PROJECTILE);
+        this(position, new Dimension(30, 30), 600, direction, 20, 1, 5.0, fromPlayer);
+        setSprite(new Sprite(position, size, DrawLayer.PROJECTILES, SpriteAnimations.GREEN_PROJECTILE_SPIN));
+    }
+
+    protected Projectile(DoublePoint position, Dimension size, double movementSpeed, Vector direction, double damage, int maxHits, double knockbackMultiplier, boolean fromPlayer) {
+        super(position, size, movementSpeed, -1, damage, (fromPlayer) ? EntityType.PLAYER_PROJECTILE : EntityType.ENEMY_PROJECTILE);
         direction.setLength(movementSpeed);
         velocity = direction;
-        setSprite(new Sprite(position, size, DrawLayer.PROJECTILES, SpriteAnimations.BLUE_PROJECTILE_SPIN));
-        knockbackMultiplier = 5.0;
-        numHits = 0;
-        maxHits = 1;
+        this.maxHits = maxHits;
+        this.knockbackMultiplier = knockbackMultiplier;
     }
 
     @Override

@@ -1,10 +1,8 @@
 package enemygame.util;
 
-import enemygame.util.interfaces.Collision;
-
 import java.awt.*;
 
-public class GameObject implements Collision {
+public class GameObject {
     protected DoublePoint position;
     protected Dimension size;
 
@@ -13,9 +11,8 @@ public class GameObject implements Collision {
         this.size = size;
     }
 
-    @Override
-    public Rectangle getCollision() {
-        return new Rectangle(position.asAWTPoint(), size);
+    public Rectangle getCollisionRect() {
+        return new Rectangle((int) position.getX(), (int) position.getY(), (int) size.getWidth(), (int) size.getHeight());
     }
 
     public DoublePoint getPosition() {

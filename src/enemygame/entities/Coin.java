@@ -14,5 +14,6 @@ public class Coin extends Entity {
     }
 
     @Override
-    public void tick(double frameTime) {}
+    public void tick(double frameTime) {
+    }
 }
