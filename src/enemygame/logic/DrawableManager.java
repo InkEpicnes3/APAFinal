@@ -1,4 +1,4 @@
-package enemygame.managers;
+package enemygame.logic;
 
 import enemygame.graphics.DrawLayer;
 import enemygame.util.interfaces.Drawable;

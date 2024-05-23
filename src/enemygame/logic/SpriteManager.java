@@ -1,4 +1,4 @@
-package enemygame.managers;
+package enemygame.logic;
 
 import enemygame.graphics.Sprite;
 import enemygame.util.interfaces.GameTick;

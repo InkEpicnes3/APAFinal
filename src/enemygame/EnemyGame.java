@@ -3,9 +3,9 @@ package enemygame;
 import enemygame.entities.Player;
 import enemygame.graphics.GamePanel;
 import enemygame.logic.EnemySpawner;
-import enemygame.managers.EntityManager;
-import enemygame.managers.InputManager;
-import enemygame.managers.SpriteManager;
+import enemygame.logic.EntityManager;
+import enemygame.logic.InputManager;
+import enemygame.logic.SpriteManager;
 import enemygame.util.DoublePoint;
 
 import javax.swing.*;
@@ -66,7 +66,7 @@ public class EnemyGame implements Runnable {
         double drawInterval = 1_000_000_000d / 60;
         double delta = 0;
         long lastTime = System.nanoTime();
-        long currentTime;
+        long currentTime, lastDrawTime = lastTime;
 
         while (!input.isKeyPressed(KeyEvent.VK_F8)) {
             currentTime = System.nanoTime();
@@ -75,7 +75,7 @@ public class EnemyGame implements Runnable {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                double frameTime = drawInterval / 1_000_000_000;
+                double frameTime = (currentTime - lastDrawTime) / 1_000_000_000d;
 
                 spriteManager.tick(frameTime);
                 enemySpawner.tick(frameTime);
@@ -100,6 +100,7 @@ public class EnemyGame implements Runnable {
                 }
 
                 window.repaint();
+                lastDrawTime = currentTime;
                 delta--;
             }
         }

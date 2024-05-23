@@ -15,6 +15,7 @@ public class Images {
     public static final BufferedImage PURPLE_FACE = load("purple_face_256x.png");
     public static final BufferedImage LIGHT_BLUE_FACE = load("light_blue_face_256x.png");
     public static final BufferedImage RED_FACE = load("red_face_256x.png");
+    public static final BufferedImage GREEN_FACE = load("green_face_256x.png");
 
     public static final BufferedImage COIN_01 = load("coin_01.png");
     public static final BufferedImage COIN_02 = load("coin_02.png");
@@ -67,6 +68,9 @@ public class Images {
     public static final BufferedImage YELLOW_EXPLOSION_6 = load("yellow_explosion_6.png");
     public static final BufferedImage YELLOW_EXPLOSION_7 = load("yellow_explosion_7.png");
     public static final BufferedImage YELLOW_EXPLOSION_8 = load("yellow_explosion_8.png");
+
+    public static final BufferedImage GREEN_BUBBLE_DEACTIVATED = load("green_bubble_deactivated.png");
+    public static final BufferedImage GREEN_BUBBLE_TARGETING = load("green_bubble_targeting.png");
 
     public static BufferedImage load(String imageName) {
         try {

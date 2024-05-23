@@ -1,7 +1,8 @@
-package enemygame.managers;
+package enemygame.logic;
 
 import enemygame.EnemyGame;
 import enemygame.entities.*;
+import enemygame.entities.projectiles.Projectile;
 import enemygame.util.interfaces.GameTick;
 
 import java.util.ArrayList;

@@ -1,7 +1,10 @@
-package enemygame.entities;
+package enemygame.entities.enemies;
 
 import enemygame.EnemyGame;
 import enemygame.data.Images;
+import enemygame.entities.Coin;
+import enemygame.entities.Entity;
+import enemygame.entities.EntityType;
 import enemygame.graphics.DrawLayer;
 import enemygame.graphics.Sprite;
 import enemygame.util.DoublePoint;
@@ -10,10 +13,10 @@ import enemygame.util.Vector;
 import java.awt.*;
 
 public class Enemy extends Entity {
-    private final Entity target;
+    protected final Entity target;
 
     public Enemy(DoublePoint position, Entity target) {
-        super(position, new Dimension(50, 50), 150, 100, 20, EntityType.ENEMY);
+        super(position, new Dimension(50, 50), 100, 100, 20, EntityType.ENEMY);
         setSprite(new Sprite(position, size, DrawLayer.ENEMIES, Images.RED_FACE));
         this.target = target;
     }
