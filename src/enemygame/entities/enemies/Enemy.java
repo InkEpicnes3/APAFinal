@@ -30,7 +30,7 @@ public class Enemy extends Entity {
 
     public void kill() {
         super.kill();
-        if (Math.random() < 0.1)
+        if (Math.random() < 0.35d)
             EnemyGame.getEntityManager().addEntity(new Coin(new DoublePoint(position)));
     }
 }

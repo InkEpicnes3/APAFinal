@@ -30,7 +30,7 @@ public class EnemyGame implements Runnable {
 
     public EnemyGame() {
         window = new JFrame("Enemy Game");
-        window.setPreferredSize(new Dimension(1920, 1080));
+        window.setPreferredSize(new Dimension(1366, 768));
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setUndecorated(true);
