@@ -26,4 +26,16 @@ public class HealthComponent {
     public boolean isDead() {
         return currentHealth == 0;
     }
+
+    public double getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void setCurrentHealth(double currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
 }

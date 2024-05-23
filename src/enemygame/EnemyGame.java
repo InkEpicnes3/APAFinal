@@ -18,6 +18,8 @@ public class EnemyGame implements Runnable {
     private static GamePanel panel;
     private static Thread gameThread;
     private static int gameScore = 0;
+    private static double timeSincePlayerDeath = 0;
+    private static boolean playerRespawning = false;
     public static final String resFolder = System.getProperty("user.dir") + "/res/";
 
     private static InputManager input;
@@ -28,7 +30,7 @@ public class EnemyGame implements Runnable {
 
     public EnemyGame() {
         window = new JFrame("Enemy Game");
-        window.setPreferredSize(new Dimension(1366, 768));
+        window.setPreferredSize(new Dimension(1920, 1080));
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setUndecorated(true);
@@ -43,8 +45,9 @@ public class EnemyGame implements Runnable {
         spriteManager = new SpriteManager();
 
         entityManager = new EntityManager();
-        entityManager.addEntity(new Player(new DoublePoint(500, 500), input));
-        enemySpawner = new EnemySpawner(0.5, 255, entityManager);
+        entityManager.setPlayer(new Player(new DoublePoint(500, 500), input));
+        enemySpawner = new EnemySpawner(entityManager);
+        GamePanel.initPlayerHealthBar();
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
@@ -64,13 +67,11 @@ public class EnemyGame implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        long timer = 0;
 
         while (!input.isKeyPressed(KeyEvent.VK_F8)) {
             currentTime = System.nanoTime();
 
             delta += (currentTime - lastTime) / drawInterval;
-            timer += (currentTime - lastTime);
             lastTime = currentTime;
 
             if (delta >= 1) {
@@ -80,13 +81,27 @@ public class EnemyGame implements Runnable {
                 enemySpawner.tick(frameTime);
                 enemySpawner.trySpawnEnemy();
                 entityManager.tick(frameTime);
-                window.repaint();
+                timeSincePlayerDeath += frameTime;
 
+                if (entityManager.getPlayer().getHealth().isDead() && timeSincePlayerDeath >= 3.0) {
+                    timeSincePlayerDeath = 0;
+                    if (playerRespawning) {
+                        gameScore = 0;
+                        playerRespawning = false;
+                        entityManager.getPlayer().resetHealth();
+                        entityManager.clearAllEntities();
+                        entityManager.getPlayer().setPosition(new DoublePoint(500, 500));
+                        entityManager.getPlayer().enableInput();
+                    } else {
+                        entityManager.getPlayer().disableInput();
+                        enemySpawner = new EnemySpawner(entityManager);
+                        playerRespawning = true;
+                    }
+                }
+
+                window.repaint();
                 delta--;
             }
-
-            if (timer >= 1_000_000_000)
-                timer = 0;
         }
         // https://stackoverflow.com/questions/1234912/how-to-programmatically-close-a-jframe
         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
@@ -98,6 +113,10 @@ public class EnemyGame implements Runnable {
 
     public static int getGameScore() {
         return gameScore;
+    }
+
+    public static double getTimeSincePlayerDeath() {
+        return timeSincePlayerDeath;
     }
 
     public static SpriteManager getSpriteManager() {

@@ -6,7 +6,7 @@ import enemygame.util.interfaces.GameTick;
 import java.util.ArrayList;
 
 public class SpriteManager implements GameTick {
-    ArrayList<Sprite> sprites;
+    private final ArrayList<Sprite> sprites;
 
     public SpriteManager() {
         sprites = new ArrayList<>();

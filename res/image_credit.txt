@@ -1,30 +1,15 @@
 https://opengameart.org/content/rotating-coin
- - coin_01.png
- - coin_02.png
- - coin_03.png
- - coin_04.png
- - coin_05.png
- - coin_06.png
- - coin_07.png
- - coin_08.png
+ - Coin
 
 https://opengameart.org/content/20-crosshairs-for-re
  - cursor.png
 
 https://opengameart.org/content/bullet-collection-1-m484
- - projectile_blue_spin_1.png
- - projectile_blue_spin_2.png
- - projectile_blue_spin_3.png
- - projectile_blue_spin_4.png
- - projectile_green_spin_1.png
- - projectile_green_spin_2.png
- - projectile_green_spin_3.png
- - projectile_green_spin_4.png
- - projectile_red_spin_1.png
- - projectile_red_spin_2.png
- - projectile_red_spin_3.png
- - projectile_red_spin_4.png
- - projectile_yellow_spin_1.png
- - projectile_yellow_spin_2.png
- - projectile_yellow_spin_3.png
- - projectile_yellow_spin_4.png
+ - All projectiles
+ - All rockets
+
+https://opengameart.org/content/explosion-set-2-m484-games
+ - All explosions
+
+https://opengameart.org/content/pixel-health-bar-asset-pack-2
+ - Health bars

@@ -1,5 +1,7 @@
 package enemygame.data;
 
+import enemygame.EnemyGame;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,6 +9,9 @@ import java.io.IOException;
 
 public class Images {
     public static final BufferedImage CURSOR_IMG = load("cursor.png");
+    public static final BufferedImage HEALTH_BAR_EMPTY = load("health_bar_empty.png");
+    public static final BufferedImage HEALTH_BAR_INNER = load("health_bar_inner.png");
+
     public static final BufferedImage PURPLE_FACE = load("purple_face_256x.png");
     public static final BufferedImage LIGHT_BLUE_FACE = load("light_blue_face_256x.png");
     public static final BufferedImage RED_FACE = load("red_face_256x.png");
@@ -39,14 +44,33 @@ public class Images {
 
     public static final BufferedImage RED_ROCKET_UP_1 = load("rocket_red_up_1.png");
     public static final BufferedImage RED_ROCKET_UP_2 = load("rocket_red_up_2.png");
+    public static final BufferedImage RED_ROCKET_DOWN_1 = load("rocket_red_down_1.png");
+    public static final BufferedImage RED_ROCKET_DOWN_2 = load("rocket_red_down_2.png");
+    public static final BufferedImage RED_ROCKET_LEFT_1 = load("rocket_red_left_1.png");
+    public static final BufferedImage RED_ROCKET_LEFT_2 = load("rocket_red_left_2.png");
     public static final BufferedImage RED_ROCKET_RIGHT_1 = load("rocket_red_right_1.png");
     public static final BufferedImage RED_ROCKET_RIGHT_2 = load("rocket_red_right_2.png");
-    public static final BufferedImage RED_ROCKET_DIAGONAL_1 = load("rocket_red_up_right_1.png");
-    public static final BufferedImage RED_ROCKET_DIAGONAL_2 = load("rocket_red_up_right_2.png");
+    public static final BufferedImage RED_ROCKET_UP_RIGHT_1 = load("rocket_red_up_right_1.png");
+    public static final BufferedImage RED_ROCKET_UP_RIGHT_2 = load("rocket_red_up_right_2.png");
+    public static final BufferedImage RED_ROCKET_DOWN_RIGHT_1 = load("rocket_red_down_right_1.png");
+    public static final BufferedImage RED_ROCKET_DOWN_RIGHT_2 = load("rocket_red_down_right_2.png");
+    public static final BufferedImage RED_ROCKET_UP_LEFT_1 = load("rocket_red_up_left_1.png");
+    public static final BufferedImage RED_ROCKET_UP_LEFT_2 = load("rocket_red_up_left_2.png");
+    public static final BufferedImage RED_ROCKET_DOWN_LEFT_1 = load("rocket_red_down_left_1.png");
+    public static final BufferedImage RED_ROCKET_DOWN_LEFT_2 = load("rocket_red_down_left_2.png");
+
+    public static final BufferedImage YELLOW_EXPLOSION_1 = load("yellow_explosion_1.png");
+    public static final BufferedImage YELLOW_EXPLOSION_2 = load("yellow_explosion_2.png");
+    public static final BufferedImage YELLOW_EXPLOSION_3 = load("yellow_explosion_3.png");
+    public static final BufferedImage YELLOW_EXPLOSION_4 = load("yellow_explosion_4.png");
+    public static final BufferedImage YELLOW_EXPLOSION_5 = load("yellow_explosion_5.png");
+    public static final BufferedImage YELLOW_EXPLOSION_6 = load("yellow_explosion_6.png");
+    public static final BufferedImage YELLOW_EXPLOSION_7 = load("yellow_explosion_7.png");
+    public static final BufferedImage YELLOW_EXPLOSION_8 = load("yellow_explosion_8.png");
 
     public static BufferedImage load(String imageName) {
         try {
-            return ImageIO.read(new File(System.getProperty("user.dir") + "/res/" + imageName));
+            return ImageIO.read(new File(EnemyGame.resFolder + imageName));
         }
         catch (IOException e) {
             return null;

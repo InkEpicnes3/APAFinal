@@ -13,8 +13,7 @@ public abstract class Entity extends GameObject implements GameTick {
 
     protected Sprite sprite;
     protected HealthComponent health;
-    protected Hurtbox hurtbox;
-    protected Hitbox hitbox;
+    protected double damage;
 
     protected final EntityType type;
 
@@ -24,8 +23,7 @@ public abstract class Entity extends GameObject implements GameTick {
         this.movementSpeed = movementSpeed;
 
         this.health = new HealthComponent(health);
-        this.hurtbox = new Hurtbox(position, size);
-        this.hitbox = new Hitbox(position, size, damage);
+        this.damage = damage;
 
         this.type = type;
     }
@@ -35,8 +33,16 @@ public abstract class Entity extends GameObject implements GameTick {
         EnemyGame.getEntityManager().getEntities(type).remove(this);
     }
 
+    public boolean collidesWith(Entity entity) {
+        return getCollisionRect().intersects(entity.getCollisionRect());
+    }
+
     public void applyVelocity(double frameTime) {
         position.translate(velocity.getX() * frameTime, velocity.getY() * frameTime);
+    }
+
+    public boolean isVisible() {
+        return getCollisionRect().intersects(new Rectangle(new Point(), EnemyGame.getWindowSize()));
     }
 
     @Override
@@ -72,6 +78,8 @@ public abstract class Entity extends GameObject implements GameTick {
     }
 
     public void setSprite(Sprite sprite) {
+        if (this.sprite != null)
+            this.sprite.kill();
         this.sprite = sprite;
     }
 
@@ -83,20 +91,12 @@ public abstract class Entity extends GameObject implements GameTick {
         this.health = health;
     }
 
-    public Hurtbox getHurtbox() {
-        return hurtbox;
+    public double getDamage() {
+        return damage;
     }
 
-    public void setHurtbox(Hurtbox hurtbox) {
-        this.hurtbox = hurtbox;
-    }
-
-    public Hitbox getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(Hitbox hitbox) {
-        this.hitbox = hitbox;
+    public void setDamage(double damage) {
+        this.damage = damage;
     }
 
     public EntityType getType() {
